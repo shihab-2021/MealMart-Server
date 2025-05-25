@@ -122,7 +122,6 @@ const loginUser = async (payload: ILoginUser) => {
 
 const oauthLogin = async (payload: { email: string }) => {
   // Check if the user already exists
-  console.log(payload);
   const user = await User.findOne({ email: payload.email });
 
   // If the user doesn't exist, create a new one

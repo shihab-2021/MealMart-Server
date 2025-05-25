@@ -52,6 +52,12 @@ const getUnverifiedOrg = async (): Promise<IProviderOrganization[]> => {
   return result;
 };
 
+const getVerifiedOrg = async (): Promise<IProviderOrganization[]> => {
+  const result = await Organization.find({ isVerified: true });
+
+  return result;
+};
+
 const deleteAnOrg = async (id: string) => {
   const result = await Organization.findByIdAndDelete(id);
 
@@ -73,6 +79,7 @@ const updateAOrg = async (id: string, data: IProviderOrganization) => {
 export const orgServices = {
   createOrg,
   getASpecificOrg,
+  getVerifiedOrg,
   verifyOrg,
   getUnverifiedOrg,
   deleteAnOrg,

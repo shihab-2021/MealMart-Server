@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import QueryBuilder from "../../builder/QueryBuilder";
 import AppError from "../../errors/AppError";
-import { IMeal } from "./meal.interface";
+import { IMeal, IReview } from "./meal.interface";
 import { Meal } from "./meal.model";
 import { JwtPayload } from "jsonwebtoken";
 import { Organization } from "../organization/organization.model";
@@ -76,6 +76,58 @@ const updateAMeal = async (id: string, data: IMeal) => {
   });
 
   return result;
+};
+
+const addReview = async (
+  user: JwtPayload,
+  id: string,
+  data: Partial<IReview>,
+) => {
+  const userId = user?._id;
+  const meal = await Meal.isMealExistsById(id);
+  if (!meal) {
+    throw new AppError(StatusCodes.NOT_FOUND, "No Data Found");
+  }
+  if (!data?.rating || typeof data?.rating !== "number") {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rating is required and must be a number",
+    );
+  }
+  if (!data?.description || typeof data?.description !== "string") {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rating is required and must be a number",
+    );
+  }
+  // Optional: check if the user has already reviewed
+  const alreadyReviewed = meal.reviews.find(
+    (rev: any) => rev.user.toString() === userId.toString(),
+  );
+  if (alreadyReviewed) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "You have already reviewed this meal",
+    );
+  }
+  // Create new review object
+  const newReview = {
+    rating: Number(data?.rating),
+    user: userId,
+    description: data?.description.trim(),
+  };
+
+  // Add review to meal
+  meal.reviews.push(newReview);
+  await meal.save();
+
+  // Populate user info in the response
+  await meal.populate("reviews.user", "name email");
+
+  // Get the newly added review
+  const addedReview = meal.reviews[meal.reviews.length - 1];
+
+  return addedReview;
 };
 
 const deleteAMeal = async (id: string) => {
@@ -165,4 +217,5 @@ export const mealServices = {
   getASpecificCar,
   updateACar,
   deleteACar,
+  addReview,
 };

@@ -36,6 +36,21 @@ const updateStock = catchAsync(async (req, res) => {
   });
 });
 
+const addReview = catchAsync(async (req, res) => {
+  const result = await mealServices.addReview(
+    req.user,
+    req.params.mealId,
+    req.body,
+  );
+
+  sendResponse(res, {
+    status: true,
+    statusCode: StatusCodes.OK,
+    message: "Review added successfully!",
+    data: result,
+  });
+});
+
 const getASpecificMeal = catchAsync(async (req, res) => {
   const mealId = req.params.mealId;
   const result = await mealServices.getASpecificMeal(mealId);
@@ -112,4 +127,5 @@ export const mealControllers = {
   updateAMeal,
   deleteAMeal,
   getAllMeals,
+  addReview,
 };

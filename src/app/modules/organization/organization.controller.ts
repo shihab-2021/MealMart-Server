@@ -48,6 +48,17 @@ const getUnverifiedOrg = catchAsync(async (req, res) => {
   });
 });
 
+const getVerifiedOrg = catchAsync(async (req, res) => {
+  const result = await orgServices.getVerifiedOrg();
+
+  sendResponse(res, {
+    status: true,
+    statusCode: StatusCodes.OK,
+    message: "Organization retrieved successfully!",
+    data: result,
+  });
+});
+
 const getASpecificOrg = catchAsync(async (req, res) => {
   const orgId = req.params.orgId;
   const result = await orgServices.getASpecificOrg(orgId);
@@ -96,6 +107,7 @@ const deleteAnOrg = catchAsync(async (req, res) => {
 export const orgControllers = {
   createOrg,
   getASpecificOrg,
+  getVerifiedOrg,
   verifyOrg,
   getUnverifiedOrg,
   deleteAnOrg,

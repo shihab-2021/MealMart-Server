@@ -15,6 +15,14 @@ router
   .get(auth(USER_ROLE.provider), mealControllers.getProviderMeals);
 
 router
+  .route("/review/:mealId")
+  .put(auth(USER_ROLE.customer), mealControllers.addReview);
+
+router
+  .route("/updateStock/:mealId")
+  .put(auth(USER_ROLE.provider), mealControllers.updateStock);
+
+router
   .route("/:mealId")
   .get(mealControllers.getASpecificMeal)
   .put(auth(USER_ROLE.provider), mealControllers.updateAMeal)
@@ -22,9 +30,5 @@ router
     auth(USER_ROLE.provider, USER_ROLE.admin),
     mealControllers.deleteAMeal,
   );
-
-router
-  .route("/updateStock/:mealId")
-  .put(auth(USER_ROLE.provider), mealControllers.updateStock);
 
 export const mealRoutes = router;

@@ -8,13 +8,10 @@ const router = Router();
 router.route("/").post(auth(USER_ROLE.provider), orgControllers.createOrg);
 
 router
-  .route("/:orgId")
-  .get(orgControllers.getASpecificOrg)
-  .put(auth(USER_ROLE.provider), orgControllers.updateAOrg);
-
-router
   .route("/admin/unverifiedOrg")
   .get(auth(USER_ROLE.admin), orgControllers.getUnverifiedOrg);
+
+router.route("/verifiedOrgs").get(orgControllers.getVerifiedOrg);
 
 // .delete(auth(USER_ROLE.admin), orgControllers.deleteAnOrg);
 
@@ -24,5 +21,10 @@ router
 //   .delete(auth(USER_ROLE.user, USER_ROLE.admin), orgControllers.deleteACar);
 
 // router.route("/:id").put(auth(USER_ROLE.admin), orgControllers.verifyOrg);
+
+router
+  .route("/:orgId")
+  .get(orgControllers.getASpecificOrg)
+  .put(auth(USER_ROLE.provider), orgControllers.updateAOrg);
 
 export const orgRoutes = router;

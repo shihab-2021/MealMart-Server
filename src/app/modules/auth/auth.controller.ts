@@ -60,7 +60,6 @@ const loginUser = catchAsync(async (req, res) => {
 });
 
 const oauthLogin = catchAsync(async (req, res) => {
-  console.log(req.body);
   const result = await authServices.oauthLogin(req.body);
 
   res.cookie("refreshToken", result.refreshToken, {

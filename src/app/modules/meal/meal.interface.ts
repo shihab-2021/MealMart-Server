@@ -5,13 +5,15 @@ interface IIngredient {
   description: string;
 }
 
-interface IReview {
+export interface IReview {
   rating: number;
   user: Types.ObjectId;
   description: string;
 }
 
 export interface IMeal {
+  populate(arg0: string, arg1: string): unknown;
+  save(): unknown;
   mealName: string;
   orgId: Types.ObjectId;
   description: string;
