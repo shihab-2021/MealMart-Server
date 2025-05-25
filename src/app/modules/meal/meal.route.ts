@@ -14,8 +14,11 @@ router
   .route("/providerMeals")
   .get(auth(USER_ROLE.provider), mealControllers.getProviderMeals);
 
+router.route("/allReviews").get(mealControllers.getAllMealReviews);
+
 router
   .route("/review/:mealId")
+  .get(mealControllers.getASpecificMealReviews)
   .put(auth(USER_ROLE.customer), mealControllers.addReview);
 
 router

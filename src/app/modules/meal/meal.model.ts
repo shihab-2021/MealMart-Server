@@ -69,6 +69,7 @@ const mealSchema = new Schema<IMeal>(
         user: {
           type: Schema.Types.ObjectId,
           ref: "User",
+          required: true,
         },
         description: { type: String },
       },

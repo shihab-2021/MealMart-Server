@@ -83,7 +83,7 @@ const addReview = async (
   id: string,
   data: Partial<IReview>,
 ) => {
-  const userId = user?._id;
+  const userId = user?.id;
   const meal = await Meal.isMealExistsById(id);
   if (!meal) {
     throw new AppError(StatusCodes.NOT_FOUND, "No Data Found");
@@ -128,6 +128,19 @@ const addReview = async (
   const addedReview = meal.reviews[meal.reviews.length - 1];
 
   return addedReview;
+};
+
+const getASpecificMealReviews = async (mealId: string) => {
+  const result = await Meal.findById(mealId).populate({
+    path: "reviews.user",
+    select: "name email avatar", // you can customize fields
+  });
+
+  if (result === null) {
+    throw new Error("Meal does not exists!");
+  }
+
+  return result.reviews;
 };
 
 const deleteAMeal = async (id: string) => {
@@ -205,6 +218,52 @@ const deleteACar = async (id: string) => {
   return result;
 };
 
+const getAllMealReviews = async () => {
+  const reviews = await Meal.aggregate([
+    // Unwind reviews array
+    { $unwind: "$reviews" },
+
+    // Lookup user info
+    {
+      $lookup: {
+        from: "users", // collection name
+        localField: "reviews.user",
+        foreignField: "_id",
+        as: "userInfo",
+      },
+    },
+
+    // Flatten userInfo array
+    { $unwind: "$userInfo" },
+
+    // Project only required fields
+    {
+      $project: {
+        _id: "$reviews._id",
+        rating: "$reviews.rating",
+        description: "$reviews.description",
+        user: {
+          _id: "$userInfo._id",
+          name: "$userInfo.name",
+          email: "$userInfo.email",
+          avatar: "$userInfo.avatar", // optional
+        },
+        meal: {
+          _id: "$_id",
+          mealName: "$mealName",
+          category: "$category",
+          images: "$images",
+        },
+      },
+    },
+
+    // Optional: sort newest first
+    { $sort: { createdAt: -1 } },
+  ]);
+
+  return reviews;
+};
+
 export const mealServices = {
   createMeal,
   getProviderMeals,
@@ -218,4 +277,6 @@ export const mealServices = {
   updateACar,
   deleteACar,
   addReview,
+  getASpecificMealReviews,
+  getAllMealReviews,
 };
