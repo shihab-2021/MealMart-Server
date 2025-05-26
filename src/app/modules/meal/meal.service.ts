@@ -264,6 +264,27 @@ const getAllMealReviews = async () => {
   return reviews;
 };
 
+const searchMeals = async (query: string) => {
+  if (!query || typeof query !== "string") {
+    throw new AppError(StatusCodes.NOT_FOUND, "Search query is required");
+  }
+
+  const regex = new RegExp(query, "i"); // case-insensitive
+
+  const meals = await Meal.find({
+    $or: [
+      { mealName: regex },
+      { description: regex },
+      { category: regex },
+      { "keyIngredients.ingredientName": regex },
+    ],
+  })
+    .limit(20)
+    .select("mealName description price category images") // return specific fields
+    .populate("orgId", "name"); // populate org name
+  return meals;
+};
+
 export const mealServices = {
   createMeal,
   getProviderMeals,
@@ -279,4 +300,5 @@ export const mealServices = {
   addReview,
   getASpecificMealReviews,
   getAllMealReviews,
+  searchMeals,
 };

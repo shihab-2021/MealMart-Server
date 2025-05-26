@@ -86,6 +86,18 @@ const getAllMealReviews = catchAsync(async (req, res) => {
   });
 });
 
+const searchMeals = catchAsync(async (req, res) => {
+  const { query } = req.query;
+  const result = await mealServices.searchMeals(query as string);
+
+  sendResponse(res, {
+    status: true,
+    statusCode: StatusCodes.OK,
+    message: "Meal retrieved successfully!",
+    data: result,
+  });
+});
+
 const updateAMeal = catchAsync(async (req, res) => {
   const mealId = req.params.mealId;
   const body = req.body;
@@ -153,4 +165,5 @@ export const mealControllers = {
   addReview,
   getASpecificMealReviews,
   getAllMealReviews,
+  searchMeals,
 };

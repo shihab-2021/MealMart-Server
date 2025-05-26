@@ -10,6 +10,8 @@ router
   .get(mealControllers.getAllMeals)
   .post(auth(USER_ROLE.provider), mealControllers.createMeal);
 
+router.route("/searchMeal").get(mealControllers.searchMeals);
+
 router
   .route("/providerMeals")
   .get(auth(USER_ROLE.provider), mealControllers.getProviderMeals);
